@@ -12,80 +12,80 @@
 
 #include "../header/cub3d.h"
 
-char	*get_remainder(char *remainder)
+char	*update_remainder(char *remainder)
 {
-	char	*pc_res;
+	char	*new_remainder;
+	int		len;
 	int		i;
-	int		j;
 
+	len = 0;
 	i = 0;
-	j = 0;
 	if (!remainder)
-		return (0);
-	while (remainder[i] && remainder[i] != '\n')
-		i++;
-	if (!remainder[i])
+		return (NULL);
+	while (remainder[len] != '\n' && remainder[len] != '\0')
+		len++;
+	if (!remainder[len])
 	{
 		free(remainder);
-		return (0);
+		return (NULL);
 	}
-	if (!(pc_res = malloc(sizeof(char) * ((ft_strlen(remainder) - i) + 1))))
-		return (0);
-	i++;
-	while (remainder[i])
-		pc_res[j++] = remainder[i++];
-	pc_res[j] = '\0';
+	if (!(new_remainder = malloc(sizeof(char) * ((ft_strlen(remainder) - len) +
+			1))))
+		return (NULL);
+	len++;
+	while (remainder[len] != '\0')
+		new_remainder[i++] = remainder[len++];
+	new_remainder[i] = '\0';
 	free(remainder);
-	return (pc_res);
+	return (new_remainder);
 }
 
-char	*get_line(const char *str)
+char	*take_line_from_remainder(const char *str)
 {
 	int		i;
-	char	*pc_res;
+	int		len;
+	char	*tmp;
 
+	len = 0;
 	i = 0;
 	if (!str)
-		return (0);
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (!(pc_res = malloc(sizeof(char) * (i + 1))))
-		return (0);
-	i = 0;
-	while (str[i] && str[i] != '\n')
+		return (NULL);
+	while (str[len] != '\n' && str[len] != '\0')
+		len++;
+	if (!(tmp = malloc(sizeof(char) * (len + 1))))
+		return (NULL);
+	while (str[i] != '\n' && str[i] != '\0')
 	{
-		pc_res[i] = str[i];
+		tmp[i] = str[i];
 		i++;
 	}
-	pc_res[i] = '\0';
-	return (pc_res);
+	tmp[i] = '\0';
+	return (tmp);
 }
 
 int		get_next_line(int fd, char **line)
 {
-	char			*buf;
-	int				i;
+	char			*buffer;
+	int				bytes;
 	static	char	*remainder;
 
-	i = 1;
-	if (fd < 0 || !line)
+	bytes = 1;
+	if (fd < 0 || !line || BUFFER_SIZE <= 0)
 		return (-1);
-	if (!(buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
+	if (!(buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
-	while (!newline(remainder) && i != 0)
+	while (!newline(remainder) && bytes != 0)
 	{
-		if ((i = read(fd, buf, BUFFER_SIZE)) == -1)
-		{
-			free(buf);
+		if ((bytes = read(fd, buffer, BUFFER_SIZE)) == -1)
 			return (-1);
-		}
-		buf[i] = '\0';
-		remainder = ft_strjoin(remainder, buf);
+		buffer[bytes] = '\0';
+		if (!(remainder = ft_strjoin(remainder, buffer)))
+			return (-1);
 	}
-	free(buf);
-	*line = get_line(remainder);
-	remainder = get_remainder(remainder);
-	if (i == 0)
+	free(buffer);
+	if (!(*line = take_line_from_remainder(remainder)))
+		return (-1);
+	if (!(remainder = update_remainder(remainder)))
 		return (0);
 	return (1);
 }

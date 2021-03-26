@@ -14,21 +14,28 @@
 
 int			skip_spaces(char *str, int *i)
 {
-	while (str[*i] == ' ' || str[*i] == '\n' || str[*i] == '\t')
+	while (str[*i] == ' ' || str[*i] == '\n')
 		(*i)++;
 	return (1);
 }
 
-int			take_num(char *str, int *i)
+int			take_num(t_all *d, char *str, int *i)
 {
 	int		res;
+	int		digit_capacity;
 
 	res = 0;
+	digit_capacity = 0;
 	skip_spaces(str, i);
 	while (str[*i] >= '0' && str[*i] <= '9')
 	{
 		res = res * 10 + (str[*i] - '0');
 		(*i)++;
+		digit_capacity++;
+		if (d->flag == 1 && res > 20000)
+			runtime_errors(d, -2);
+		if (digit_capacity >= 6)
+			return (res);
 	}
 	return (res);
 }

@@ -43,7 +43,8 @@ void		init_xpm(t_all *d)
 
 void		cub3d(t_all *d)
 {
-	d->img.mlx = mlx_init();
+	if (!(d->img.mlx = mlx_init()))
+		runtime_errors(d, -3);
 	parser(d);
 	init_xpm(d);
 	init_player(d);
@@ -85,8 +86,8 @@ int			initialization(char *cub, int flag)
 	d.we.path = NULL;
 	d.ea.path = NULL;
 	d.sp.path = NULL;
-	d.f_color = 0;
-	d.c_color = 0;
+	d.f_color = -1;
+	d.c_color = -1;
 	d.cub = cub;
 	cub3d(&d);
 	return (SUCCESS);

@@ -39,7 +39,7 @@ void		horizont(t_all *d, char ch)
 		d->plr.dir_x = 0;
 		d->plr.dir_y = -1;
 		d->plr.pl_x = -0.66;
-		d->plr.pl_x = 0;
+		d->plr.pl_y = 0;
 	}
 	else if (ch == 'E')
 	{

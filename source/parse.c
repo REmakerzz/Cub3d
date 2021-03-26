@@ -6,7 +6,7 @@
 /*   By: cmarchba <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 17:11:26 by cmarchba          #+#    #+#             */
-/*   Updated: 2021/03/01 17:11:27 by cmarchba         ###   ########.fr       */
+/*   Updated: 2021/03/18 22:06:40 by cmarchba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@ void	take_res(char *str, t_all *d, int *i)
 		runtime_errors(d, -2);
 	(*i)++;
 	skip_spaces(str, i);
-	x = take_num(str, i);
-	y = take_num(str, i);
+	x = take_num(d, str, i);
+	while (ft_isdigit(str[*i]))
+		(*i)++;
+	y = take_num(d, str, i);
 	d->tmp_scw = x;
 	d->tmp_sch = y;
 	mlx_get_screen_size(d->img.mlx, &x, &y);
@@ -31,6 +33,8 @@ void	take_res(char *str, t_all *d, int *i)
 	d->aspect_ratio = (double)d->sch / (double)d->scw;
 	if (d->aspect_ratio != 0.75)
 		d->aspect_ratio = 0.75 / d->aspect_ratio;
+	while (ft_isdigit(str[*i]))
+		(*i)++;
 	if (d->scw <= 0 || d->sch <= 0 || str[*i] != '\0')
 		runtime_errors(d, -2);
 }
@@ -39,7 +43,7 @@ void	take_tex(t_all *d, char **file, char *str, int *i)
 {
 	int		j;
 	int		fd;
-	char	*path_tmp;
+	char	*pah_tmp;
 
 	if (*file != NULL)
 		runtime_errors(d, -2);
@@ -48,35 +52,41 @@ void	take_tex(t_all *d, char **file, char *str, int *i)
 	j = *i;
 	while (str[*i] != '\0')
 		(*i)++;
-	if (!(path_tmp = (char*)malloc(sizeof(char) * ((*i) - j + 1))))
+	if (!(pah_tmp = (char*)malloc(sizeof(char) * ((*i) - j + 1))))
 		runtime_errors(d, -3);
 	*i = j;
 	j = 0;
 	while (str[*i] != '\0')
-		path_tmp[j++] = str[(*i)++];
-	path_tmp[j] = '\0';
-	if (!(fd = open(path_tmp, O_RDONLY)) || !namecheck_xpm(path_tmp, "xpm"))
+		pah_tmp[j++] = str[(*i)++];
+	pah_tmp[j] = '\0';
+	if (((fd = open(pah_tmp, O_RDONLY)) < 0) || !namecheck_xpm(pah_tmp, "xpm"))
 		runtime_errors(d, -12);
 	close(fd);
-	*file = ft_substr(path_tmp, 0, ft_strlen(path_tmp));
-	free(path_tmp);
+	*file = ft_substr(pah_tmp, 0, ft_strlen(pah_tmp));
+	free(pah_tmp);
 }
 
-void	take_color(t_all *d, unsigned int *color, char *str, int *i)
+void	take_color(t_all *d, int *color, char *str, int *i)
 {
 	int		r;
 	int		g;
 	int		b;
 
-	if (*color != 0)
+	if (*color != -1)
 		runtime_errors(d, -2);
+	find_comma(d, str);
 	(*i)++;
-	r = take_num(str, i);
-	(*i)++;
-	g = take_num(str, i);
-	(*i)++;
-	b = take_num(str, i);
 	skip_spaces(str, i);
+	if (ft_isdigit(str[*i]))
+		r = take_num(d, str, i);
+	(*i)++;
+	skip_spaces(str, i);
+	if (ft_isdigit(str[*i]))
+		g = take_num(d, str, i);
+	(*i)++;
+	skip_spaces(str, i);
+	if (ft_isdigit(str[*i]))
+		b = take_num(d, str, i);
 	if (r > 255 || g > 255 || b > 255 || str[*i] != '\0')
 		runtime_errors(d, -2);
 	*color = r * 256 * 256 + g * 256 + b;
@@ -115,11 +125,12 @@ void	parser(t_all *d)
 	int		i;
 
 	i = 1;
-	if (!(fd = open(d->cub, O_RDONLY)))
+	if ((fd = open(d->cub, O_RDONLY)) < 0)
 		runtime_errors(d, -1);
 	while (i == 1)
 	{
-		i = get_next_line(fd, &line);
+		if ((i = get_next_line(fd, &line)) == -1)
+			runtime_errors(d, -2);
 		parse_config(d, line, &fd);
 		free(line);
 	}

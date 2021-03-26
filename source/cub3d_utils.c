@@ -12,6 +12,14 @@
 
 #include "../header/cub3d.h"
 
+int		ft_isdigit(char ch)
+{
+	if (ch >= '0' && ch <= '9')
+		return (1);
+	else
+		return (0);
+}
+
 int		ft_close(t_all *d)
 {
 	int		i;
@@ -50,7 +58,7 @@ int		check_elem(t_all *d)
 		return (0);
 	else if (d->sch == 0 || d->scw == 0)
 		return (0);
-	else if (d->f_color == 0 || d->c_color == 0)
+	else if (d->f_color == -1 || d->c_color == -1)
 		return (0);
 	return (1);
 }
@@ -62,7 +70,7 @@ void	runtime_errors(t_all *d, int code)
 	else if (code == -2)
 		write(1, "ERROR\nInvalid config map", 25);
 	else if (code == -3)
-		write(1, "ERROR\nMalloc error", 19);
+		write(1, "ERROR\nMalloc error or mlx libarary", 35);
 	else if (code == -4)
 		write(1, "ERROR\nInvalid texture", 22);
 	else if (code == -5)

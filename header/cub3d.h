@@ -6,7 +6,7 @@
 /*   By: cmarchba <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/01 14:37:48 by cmarchba          #+#    #+#             */
-/*   Updated: 2021/03/01 14:37:49 by cmarchba         ###   ########.fr       */
+/*   Updated: 2021/03/11 17:16:06 by cmarchba         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define CUB3D_H
 
 # include <stdio.h>
+# include <unistd.h>
 # include <fcntl.h>
 # include <math.h>
 # include <stdlib.h>
@@ -158,14 +159,14 @@ typedef struct		s_all
 	t_player		plr;
 	t_cam			ray;
 	char			*cub;
-	unsigned int	f_color;
-	unsigned int	c_color;
+	int				f_color;
+	int				c_color;
 	int				sch;
 	int				tmp_sch;
 	int				scw;
 	int				tmp_scw;
 	size_t			flag;
-	double			color;
+	int				color;
 	double			aspect_ratio;
 }					t_all;
 
@@ -177,10 +178,10 @@ int					cub_check(char *src, char *needle, int flag);
 int					get_next_line(int fd, char **line);
 int					check_elem(t_all *d);
 void				parser(t_all *d);
-int					newline(char *str);
+int					newline(const char *str);
 char				*ft_strjoin(char const *s1, char const *s2);
 int					skip_spaces(char *str, int *i);
-int					take_num(char *str, int *i);
+int					take_num(t_all *d, char *str, int *i);
 void				runtime_errors(t_all *d, int code);
 int					ft_close(t_all *d);
 void				init_player(t_all *d);
@@ -196,5 +197,7 @@ int					key_hook(int keycode, t_all *d);
 void				take_map(t_all *d, char *str, int *fd);
 void				map_validation(t_all *d);
 void				screenshot_map(t_all *d);
+int					ft_isdigit(char ch);
+void				find_comma(t_all *d, const char *str);
 
 #endif

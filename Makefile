@@ -6,7 +6,7 @@
 #    By: cmarchba <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/03/11 11:05:29 by cmarchba          #+#    #+#              #
-#    Updated: 2021/03/11 16:46:00 by cmarchba         ###   ########.fr        #
+#    Updated: 2021/03/11 22:17:19 by cmarchba         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,11 +21,12 @@ SRC			= source/cub3d.c source/cub3d_tools.c source/cub3d_utils.c\
 				source/init_player.c source/key_hook.c source/main_loop.c\
 				source/map_validation.c source/parse.c source/parse_map.c\
 				source/raycasting_utils.c source/screenshot_map.c\
-				source/sprites.c source/parse_tools.c
+				source/sprites.c source/parse_tools.c source/find_comma.c\
+
 OBJS		= $(SRC:.c=.o)
 
 CC			= gcc
-CFLAGS		= -Wall -Wextra -Werror
+CFLAGS		= -g -Wall -Wextra -Werror
 MLXFLAGS 	= -lmlx -lXext -lX11 -lm
 
 RM			= rm -f
@@ -34,15 +35,14 @@ all:		$(NAME)
 
 $(NAME):	$(OBJS) $(HEADER)
 			make -C $(MLX)
-			$(CC) $(CFLAGS) $(OBJS) $(HEADER) $(MLXFLAGS) mlx_linux/libmlx.a -L $(MLX) -o $(NAME)
-			@echo "\033[0;32m$(NAME) success compiled"
+			$(CC) $(CFLAGS) $(OBJS) $(MLXFLAGS) mlx_linux/libmlx.a -L $(MLX) -o $(NAME)
+			@echo "\n\033[0;32m$(NAME) successfully compiled\n"
 
 clean:
 			$(RM) $(OBJS)
 			$(RM) screen.bmp
 			make -C $(MLX) clean
 			$(RM) $(NAME)
-			@echo "\033[0;32msuccess deleted"
 
 fclean:		clean
 
